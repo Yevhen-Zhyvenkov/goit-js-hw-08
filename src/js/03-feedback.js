@@ -1,42 +1,42 @@
 import throttle from "lodash.throttle";
-const feedbackForm ="feedback-form-state";
-const form = document.querySelector('.feedback-form');
-const emailInput = form.querySelector('input[name="email"]');
-const messageInput = form.querySelector('textarea[name="message"]');
+
+const FEEDBACK_FORM = "feedback-form-state";
+const form = document.querySelector(".feedback-form");
+const email = form.querySelector('input[name="email"]');
+const message = form.querySelector('textarea[name="message"]');
 
 const saveFormState = throttle(() => {
   const state = {
-    email: emailInput.value,
-    message: messageInput.value
+    email: email.value,
+    message: message.value,
   };
-  localStorage.setItem(feedbackForm, JSON.stringify(state));
+  localStorage.setItem(FEEDBACK_FORM, JSON.stringify(state));
 }, 500);
 
+form.addEventListener('input', saveFormState);
 
-emailInput.addEventListener('input', saveFormState);
-messageInput.addEventListener('input', saveFormState);
-
-
-const storedState = localStorage.getItem(feedbackForm);
+const storedState = localStorage.getItem(FEEDBACK_FORM);
 if (storedState) {
   const state = JSON.parse(storedState);
-  emailInput.value = state.email;
-  messageInput.value = state.message;
+  email.value = state.email;
+  message.value = state.message;
 }
 
-form.addEventListener('submit', (event) => {
+form.addEventListener("submit", (event) => {
   event.preventDefault();
-  const state = {
-    email: emailInput.value,
-    message: messageInput.value
-  };
-    localStorage.removeItem(feedbackForm);
-  emailInput.value = '';
-  messageInput.value = '';
-  console.log(state);
+  const { email, message } = event.target.elements;
+  if (email.value.trim() && message.value.trim()) {
+    const state = {
+      email: email.value,
+      message: message.value,
+    };
+    localStorage.removeItem(FEEDBACK_FORM);
+    form.reset();
+    console.log(state);
+  } else {
+    alert("Всі поля повинні бути заповнені!");
+  }
 });
-
-
 
 
 
